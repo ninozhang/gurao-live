@@ -1,0 +1,19 @@
+{
+    "name": "gurao-live",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "underscore": "latest",
+        "async": "latest",
+        "connect": "latest",
+        "express": "latest",
+        "commander": "latest",
+        "mail": "latest",
+        "job": "latest",
+        "get": "latest",
+        "fetch": "latest",
+        "mysql": "latest",
+        "weibo": "latest",
+        "jquery": "latest"
+    }
+}
