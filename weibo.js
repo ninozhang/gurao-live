@@ -221,15 +221,23 @@ var addPic = exports.addPic = function(filepath, callback, error) {
 };
 
 var addBlog = exports.addBlog = function(content, pic, callback, error) {
-    var nickname = config.nickname,
-        maxLen = 140 - nickname.length;
-    content = content.substring(0, maxLen) + '@' + nickname;
-    console.log('add blog:', content, pic);
+    if (_.isFunction(pic)) {
+        error = callback;
+        callback = pic;
+        pic = null;
+    }
 
-    post('/mblogDeal/addAMblog?st=b1f8', {
-        content: content,
-        picFile: pic
-    }, function(data) {
+    var nickname = config.nickname,
+        maxLen = 140 - nickname.length,
+        data = {};
+
+    data.content = content.substring(0, maxLen) + '@' + nickname;
+    if (pic) {
+        data.picFile = pic;
+    }
+    console.log('add blog:', data);
+
+    post('/mblogDeal/addAMblog?st=b1f8', data, function(data) {
         if (!callback) {
             return;
         }
