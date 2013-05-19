@@ -5,7 +5,7 @@ var _ = require('underscore'),
     config = require('./config'),
     db = config.db;
 
-var update = exports.update = function() {
+var update = exports.update = function(callback) {
     var forecast = config.forecast,
         url = forecast.url,
         replacement = forecast.replacement,
@@ -25,7 +25,7 @@ var update = exports.update = function() {
                     callback(null, data);
                 };
                 getLatest(city, cb);
-            },
+            }
         },
         function(err, results) {
             var data = results.data,
@@ -40,10 +40,16 @@ var update = exports.update = function() {
                 }
             });
             if (updated) {
-                console.log(data.city_code + '的预报有更新，插入数据库');
+                console.log('forecast update: ', data.city_code + '的预报有更新，插入数据库');
                 save(data);
+                if (callback) {
+                    callback(data);
+                }
             } else {
-                console.log(data.city_code + '的预报无更新');
+                console.log('forecast noupdate: ', data.city_code + '的预报无更新');
+                if (callback) {
+                    callback(data);
+                }
             }
         });
     });
@@ -58,7 +64,9 @@ var getLatest = exports.getLatest = function (city, callback) {
     conn.query(sql, function(err, rows, fields) {
         if (err) throw err;
 
-        callback(rows[0]);
+        if (callback) {
+            callback(rows[0]);
+        }
     });
 
     conn.end();
