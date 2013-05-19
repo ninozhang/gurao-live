@@ -1,4 +1,6 @@
-var forecast = require('./forecast'),
-	weibo = require('./weibo');
+var async = require('async'),
+    forecast = require('./forecast'),
+    weibo = require('./weibo'),
+    job = require('./job');
 
-forecast.update();
+job.start();
