@@ -5,7 +5,7 @@ var _ = require('underscore'),
     config = require('./config'),
     db = config.db;
 
-exports.update = function update() {
+var update = exports.update = function() {
     var forecast = config.forecast,
         url = forecast.url,
         replacement = forecast.replacement,
@@ -50,11 +50,7 @@ exports.update = function update() {
     
 }
 
-function get(id) {
-
-}
-
-function getLatest(city, callback) {
+var getLatest = exports.getLatest = function (city, callback) {
     var conn = getConn(),
         sql = 'SELECT * FROM forecast WHERE city_code = ' + city + ' ORDER BY id DESC LIMIT 1',
         data;
