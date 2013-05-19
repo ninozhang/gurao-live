@@ -6,6 +6,7 @@
         "underscore": "latest",
         "async": "latest",
         "commander": "latest",
+        "cron": "latest",
         "mail": "latest",
         "get": "latest",
         "fetch": "latest",

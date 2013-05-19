@@ -10,3 +10,4 @@ gurao-live
 * underscore - 1.4.4
 * mysql - 0.6.8
 * fetch - 0.3.1
+* cron - 1.0.1
