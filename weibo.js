@@ -10,7 +10,7 @@ var _ = require('underscore'),
 function updateCookie(setCookie) {
     if (setCookie) {
         var changed = false;
-        setCookie.forEach(function(cookie, i) {
+        setCookie.forEach(function (cookie, i) {
             var kv = cookie.split(';')[0],
                 key = kv.split('=')[0],
                 value = kv.split('=')[1];
@@ -21,7 +21,7 @@ function updateCookie(setCookie) {
         });
         if (changed) {
             cookieString = '';
-            _.each(cookies, function(value, key) {
+            _.each(cookies, function (value, key) {
                 cookieString += key + '=' + value + ';';
             });
         }
@@ -58,7 +58,7 @@ function makeOptions(path, method, headers) {
 }
 
 function request(path, method, data, callback, error) {
-    if (_.isFunction(data)) {
+    if (_.isfunction (data)) {
         error = callback;
         callback = data;
         data = null;
@@ -73,14 +73,14 @@ function request(path, method, data, callback, error) {
     }
 
     var options = makeOptions(path, method, {'Content-Length': dataLength}),
-        req = https.request(options, function(res) {
+        req = https.request(options, function (res) {
             var chunks = [];
-            res.on('data', function(chunk) {
+            res.on('data', function (chunk) {
                 if (chunk) {
                     chunks.push(chunk);
                 }
             });
-            res.on('end', function() {
+            res.on('end', function () {
                 updateCookie(res.headers['set-cookie']);
                 var data = Buffer.concat(chunks).toString();
                 if (data) {
@@ -94,7 +94,7 @@ function request(path, method, data, callback, error) {
                     callback(data);
                 }
             });
-            res.on("error", function(e) {
+            res.on("error", function (e) {
                 if (error) {
                     error(e);
                 }
@@ -105,7 +105,7 @@ function request(path, method, data, callback, error) {
         req.write(data);
     }
 
-    req.on('error', function(e) {
+    req.on('error', function (e) {
         if (error) {
             error(e);
         }
@@ -152,27 +152,27 @@ function upload(path, filepath, callback, error) {
             'Content-Length': multipartBody.length,
             'Content-Type': 'multipart/form-data; boundary=' + boundaryKey
         }),
-        req = http.request(options, function(res) {
+        req = http.request(options, function (res) {
             var chunks = [];
-            res.on('data', function(chunk) {
+            res.on('data', function (chunk) {
                 if (chunk) {
                     chunks.push(chunk);
                 }
             });
-            res.on('end', function() {
+            res.on('end', function () {
                 var data = Buffer.concat(chunks).toString();
                 if (callback) {
                     callback(data);
                 }
             });
-            res.on("error", function(e) {
+            res.on("error", function (e) {
                 if (error) {
                     error(e);
                 }
             });
         });
 
-    req.on('error', function(e) {
+    req.on('error', function (e) {
         if (error) {
             error(e);
         }
@@ -184,7 +184,7 @@ function upload(path, filepath, callback, error) {
     return req;
 }
 
-var login = exports.login = function(callback, error) {
+var login = exports.login = function (callback, error) {
     console.log('start login');
     post('/login', {
             'check' : '1',
@@ -195,20 +195,20 @@ var login = exports.login = function(callback, error) {
         }, callback, error);
 };
 
-var getHomeData = exports.getHomeData = function(callback, error) {
+var getHomeData = exports.getHomeData = function (callback, error) {
     get('/home/homeData?page=1&', callback, error);
 };
 
-var getUserInfo = exports.getUserInfo = function(callback, error) {
-    getHomeData(function(data) {
+var getUserInfo = exports.getUserInfo = function (callback, error) {
+    getHomeData(function (data) {
         if (callback) {
             callback(data.userInfo);
         }
     }, error);
 };
 
-var addPic = exports.addPic = function(filepath, callback, error) {
-    upload('/mblogDeal/addPic?id=0', filepath, function(data) {
+var addPic = exports.addPic = function (filepath, callback, error) {
+    upload('/mblogDeal/addPic?id=0', filepath, function (data) {
         if (!callback) {
             return;
         }
@@ -220,8 +220,8 @@ var addPic = exports.addPic = function(filepath, callback, error) {
     }, error);
 };
 
-var addBlog = exports.addBlog = function(content, pic, callback, error) {
-    if (_.isFunction(pic)) {
+var addBlog = exports.addBlog = function (content, pic, callback, error) {
+    if (_.isfunction (pic)) {
         error = callback;
         callback = pic;
         pic = null;
@@ -237,7 +237,7 @@ var addBlog = exports.addBlog = function(content, pic, callback, error) {
     }
     console.log('add blog:', data);
 
-    post('/mblogDeal/addAMblog?st=b1f8', data, function(data) {
+    post('/mblogDeal/addAMblog?st=b1f8', data, function (data) {
         if (!callback) {
             return;
         }

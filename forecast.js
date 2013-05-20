@@ -1,37 +1,36 @@
 var _ = require('underscore'),
     async = require('async'),
     get = require('get'),
-    mysql = require('mysql'),
-    config = require('./config'),
-    db = config.db;
+    db = require('./db'),
+    config = require('./config');
 
-var update = exports.update = function(callback) {
+var update = exports.update = function (callback) {
     var forecast = config.forecast,
         url = forecast.url,
         replacement = forecast.replacement,
         cities = forecast.cities;
-    _.each(cities, function(city) {
+    _.each(cities, function (city) {
         async.parallel({
-            data: function(callback){
-                get({ uri: url.replace(replacement, city) }).asString(function(err, data) {
+            data: function (callback){
+                get({ uri: url.replace(replacement, city) }).asString(function (err, data) {
                     if (err) throw err;
                     var json = JSON.parse(data),
                         data = json2data(json.weatherinfo);
                     callback(null, data);
                 });
             },
-            last: function(callback){
-                var cb = function(data) {
+            last: function (callback){
+                var cb = function (data) {
                     callback(null, data);
                 };
                 getLatest(city, cb);
             }
         },
-        function(err, results) {
+        function (err, results) {
             var data = results.data,
                 last = results.last,
                 updated = false;
-            _.each(data, function(value, name) {
+            _.each(data, function (value, name) {
                 if (name == 'id') {
                     return;
                 }
@@ -41,7 +40,7 @@ var update = exports.update = function(callback) {
             });
             if (updated) {
                 console.log('forecast update: ', data.city_code + '的预报有更新，插入数据库');
-                save(data);
+                db.save('forecast', data);
                 if (callback) {
                     callback(data);
                 }
@@ -57,29 +56,13 @@ var update = exports.update = function(callback) {
 }
 
 var getLatest = exports.getLatest = function (city, callback) {
-    var conn = getConn(),
-        sql = 'SELECT * FROM forecast WHERE city_code = ' + city + ' ORDER BY id DESC LIMIT 1',
-        data;
+    var sql = 'SELECT * FROM forecast WHERE city_code = ' + city + ' ORDER BY id DESC LIMIT 1';
 
-    conn.query(sql, function(err, rows, fields) {
-        if (err) throw err;
-
+    db.query(sql, function (rows, fields) {
         if (callback) {
             callback(rows[0]);
         }
     });
-
-    conn.end();
-}
-
-function save(data) {
-    var conn = getConn();
-
-    conn.query('INSERT INTO forecast SET ?', data, function(err, result) {
-      if (err) throw err;
-    });
-
-    conn.end();
 }
 
 function getTempLow(temp) {
@@ -140,17 +123,4 @@ function json2data(f) {
         index48_dress: f.index48_d,
         index48_uv: f.index_uv
     };
-}
-
-function getConn() {
-        var conn = mysql.createConnection({
-        host: db.host,
-        database: db.database,
-        user: db.user,
-        password: db.password,
-    });
-
-    conn.connect();
-
-    return conn;
 }
