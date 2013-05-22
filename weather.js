@@ -183,7 +183,7 @@ function fetchWeather(type, filename, url) {
             console.log('天气实况图片保存到：', type + '/' + filename);
             saveWeather(type, filename, contentType, contentLength);
         } else {
-            file.delete(outpath);
+            fs.unlinkSync(outpath);
         }
     });
 }
