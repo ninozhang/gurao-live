@@ -4,15 +4,14 @@ var _ = require('underscore'),
     config = require('./config').weather,
     FetchStream = require("fetch").FetchStream,
     fs = require("fs"),
-    folder = config.folder || fs.realpathSync('.') + '/downloads/';
+    folder = config.folder || (fs.realpathSync('.') + '/downloads/');
 
 // 24小时降水
 exports.js24 = function () {
-    update();
-
-    var type = 'js24',
+    var c = getCommon(60, 20 * 60000),
+        type = 'js24',
         filename = g.yyyy + g.MM + g.dd + g.hh + g.mm + '02400' + '.JPG',
-        url = prefix +
+        url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ER24_ACHN_L88_P9_' +
                 filename;
 
@@ -22,11 +21,10 @@ exports.js24 = function () {
 
 // 48小时降水
 exports.js48 = function () {
-    update();
-
-    var type = 'js48',
+    var c = getCommon(60, 20 * 60000),
+        type = 'js48',
         filename = g.yyyy + g.MM + g.dd + g.hh + g.mm + '04800' + '.JPG',
-        url = prefix +
+        url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ER24_ACHN_L88_P9_' +
                 filename;
 
@@ -36,11 +34,10 @@ exports.js48 = function () {
 
 // 72小时降水
 exports.js72 = function () {
-    update();
-
-    var type = 'js72',
+    var c = getCommon(60, 20 * 60000),
+        type = 'js72',
         filename = g.yyyy + g.MM + g.dd + g.hh + g.mm + '07200' + '.JPG',
-        url = prefix +
+        url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ER24_ACHN_L88_P9_' +
                 filename;
 
@@ -50,11 +47,10 @@ exports.js72 = function () {
 
 // 1小时温度
 exports.wd1 = function () {
-    update();
-
-    var type = 'wd1',
+    var c = getCommon(60, 20 * 60000),
+        type = 'wd1',
         filename = fulltime + '.JPG',
-        url = prefix +
+        url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ET0_ACHN_L88_PB_' +
                 filename;
 
@@ -64,11 +60,10 @@ exports.wd1 = function () {
 
 // 1小时风场
 exports.fc1 = function () {
-    update();
-
-    var type = 'fc1',
+    var c = getCommon(60, 20 * 60000),
+        type = 'fc1',
         filename = fulltime + '.JPG',
-        url = prefix +
+        url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_EDA_ACHN_L88_PB_' +
                 filename;
 
@@ -78,11 +73,10 @@ exports.fc1 = function () {
 
 // 1小时降水
 exports.js1 = function () {
-    update();
-
-    var type = 'js1',
-        filename = fulltime + '.JPG',
-        url = prefix +
+    var c = getCommon(60, 20 * 60000),
+        type = 'js1',
+        filename = c.fulltime + '.JPG',
+        url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ER1_ACHN_L88_PB_' +
                 filename;
 
@@ -90,23 +84,9 @@ exports.js1 = function () {
     fetchWeather(type, filename, url);
 };
 
-// 雷暴天气
-exports.lbtq = function () {
-    update();
-
-    var type = 'lbtq',
-        filename = fulltime + '.JPG',
-        url = prefix +
-                'WEAP/SEVP_NMC_WEAP_SOB_EEB_ACHN_LNO_PE_' +
-                filename;
-
-    console.log('抓取【雷暴天气】图，', url);
-    fetchWeather(type, filename, url);
-};
-
 // 广州雷达
 exports.gzld = function () {
-    var c = getCommon(10 * 60000),
+    var c = getCommon(5, 10 * 60000),
         type = 'gzld',
         filename = c.fulltime + '.GIF',
         url = c.prefix +
@@ -120,7 +100,7 @@ exports.gzld = function () {
 
 // 汕头雷达
 exports.stld = function () {
-    var c = getCommon(10 * 60000),
+    var c = getCommon(5, 10 * 60000),
         type = 'stld',
         filename = c.fulltime + '.GIF',
         url = c.prefix +
@@ -134,11 +114,10 @@ exports.stld = function () {
 
 // 卫星云图
 exports.wxyt = function () {
-    update();
-
-    var type = 'wxyt',
-        filename = fulltime + '.JPG',
-        url = prefix +
+    var c = getCommon(30, 70 * 60000),
+        type = 'wxyt',
+        filename = c.fulltime + '.JPG',
+        url = c.prefix +
                 'WXCL/SEVP_NSMC_WXCL_ASC_E99_ACHN_LNO_PY_' +
                 filename;
 
@@ -148,11 +127,10 @@ exports.wxyt = function () {
 
 // 华南雷达拼图
 exports.hnldpt = function () {
-    update();
-
-    var type = 'hnldpt',
-        filename = fulltime + '.JPG',
-        url = prefix +
+    var c = getCommon(10, 40 * 60000),
+        type = 'hnldpt',
+        filename = c.fulltime + '.JPG',
+        url = c.prefix +
                 'RDCP/SEVP_NMC_RDCP_SLDAS_EZ9_ASCN_L88_PI_' +
                 filename;
 
@@ -162,11 +140,10 @@ exports.hnldpt = function () {
 
 // 全国雷达拼图
 exports.qgldpt = function () {
-    update();
-
-    var type = 'qgldpt',
-        filename = fulltime + '.JPG',
-        url = prefix +
+    var c = getCommon(10, 40 * 60000),
+        type = 'qgldpt',
+        filename = c.fulltime + '.JPG',
+        url = c.prefix +
                 'RDCP/SEVP_NMC_RDCP_SLDAS_EZ9_ACHN_L88_PI_' +
                 filename;
 
@@ -176,34 +153,47 @@ exports.qgldpt = function () {
 
 // 抓取图片逻辑
 function fetchWeather(type, filename, url) {
-    var outpath = folder + type + '/' + filename,
+    var dir = folder + type + '/',
+        outpath = dir + filename,
         stream,
         status,
         contentType,
         contentLength = 0;
 
+    if (fileSize(outpath) > 10000) {
+        console.log('天气实况图片已存在：', type + '/' + filename);
+        return;
+    }
+
+    if (!fs.existsSync(dir)) {
+        console.log('创建目录：', dir);
+        fs.mkdirSync(folder + type + '/');
+    }
+
     var fetch = new FetchStream(url);
+    stream = fs.createWriteStream(outpath);
+    fetch.pipe(stream);
     fetch.on('meta', function (meta) {
         status = meta.status;
-        contentType = meta.responseHeaders['content-length'];
+        contentType = meta.responseHeaders['content-type'];
         contentLength = meta.responseHeaders['content-length'];
     });
     fetch.on('end', function () {
-        if (status == 200) {
-            stream = fs.createWriteStream(filename);
-            fetch.pipe(stream);
-            console.log('图片保存到: ', outpath);
-
-            saveWeather(type, filename, contentLength);
+        if (status == 200 && fileSize(outpath) > 10000) {
+            console.log('天气实况图片保存到：', type + '/' + filename);
+            saveWeather(type, filename, contentType, contentLength);
+        } else {
+            file.delete(outpath);
         }
     });
 }
 
 // 保存天气实况图
-function saveWeather(type, filename, bytes) {
+function saveWeather(type, filename, contentType, bytes) {
     var data = {
         type: type,
         key: filename,
+        content_type: contentType,
         bytes: bytes,
         time: new Date()
     };
@@ -211,10 +201,13 @@ function saveWeather(type, filename, bytes) {
 }
 
 // 更新时间
-function getCommon(offset) {
-    var date = new Date(Date.now() - offset),
+function getCommon(step, delay) {
+    var gmt = new Date(Date.now() - 8 * 3600000 - delay),
+        minutes = gmt.getMinutes() - (gmt.getMinutes() % step);
+    gmt.setMinutes(minutes, 0, 0);
+
+    var date = new Date(Date.now()- delay),
         d = parseDate(date),
-        gmt =  new Date(Date.now() - 8 * 3600000 - offset),
         g = parseDate(gmt),
         fulltime = g.yyyy + g.MM + g.dd + g.hh + g.mm + g.ss + g.SSS,
         prefix = 'http://image.weather.gov.cn/product/' + d.yyyy + '/' +
@@ -257,4 +250,14 @@ function parseDate(d) {
         ss: '00',
         SSS: '000'
     };
+}
+
+// 读取图片大小
+function fileSize(path) {
+    var size = 0;
+    if (fs.existsSync(path)) {
+        var stat = fs.statSync(path);
+        size = stat.size;
+    }
+    return size;
 }
