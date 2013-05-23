@@ -7,11 +7,12 @@
         "async": "latest",
         "commander": "latest",
         "cron": "latest",
-        "mail": "latest",
         "get": "latest",
         "fetch": "latest",
         "mysql": "latest",
-        "weibo": "latest",
-        "jquery": "latest"
+        "jquery": "latest",
+        "nodemailer": "latest",
+        "gm": "latest",
+        "log": "latest"
     }
 }

@@ -52,8 +52,7 @@ var update = exports.update = function (callback) {
             }
         });
     });
-    
-}
+};
 
 var getLatest = exports.getLatest = function (city, callback) {
     var sql = 'SELECT * FROM forecast WHERE city_code = ' + city + ' ORDER BY id DESC LIMIT 1';
@@ -63,14 +62,23 @@ var getLatest = exports.getLatest = function (city, callback) {
             callback(rows[0]);
         }
     });
+};
+
+function getTemp() {
+    return {
+        a: temp.substring(0, temp.indexOf('℃')),
+        b: temp.substring(temp.indexOf('~') + 1, temp.length - 1)
+    };
 }
 
 function getTempLow(temp) {
-    return temp.substring(0, temp.indexOf('℃'));
+    var t = getTemp(temp);
+    return t.a < t.b ? t.a : t.b;
 }
 
 function getTempHigh(temp) {
-    return temp.substring(temp.indexOf('~') + 1, temp.length - 1);
+    var t = getTemp(temp);
+    return t.a > t.b ? t.a : t.b;
 }
 
 function json2data(f) {
