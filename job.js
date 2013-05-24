@@ -7,7 +7,39 @@ var _ = require('underscore'),
     live = require('./live'),
     log = require('./log'),
     weibo = require('./weibo'),
-    log = require('./log');
+    backup = require('./backup');
+
+exports.start = function () {
+    log.info('开始新增定时任务...');
+
+    var jobs = config.jobs;
+    _.each(jobs, function (job) {
+        var name = job.name,
+            fn = exports[job.fn],
+            args = job.args || [],
+            interval = job.interval,
+            cron = job.cron;
+        if (!fn) {
+            return;
+        }
+        if (interval) {
+            setInterval(function () {
+                log.info('---执行任务: ', name);
+                fn.apply(null, args);
+            }, interval);
+            log.info('新增定时任务: ', name, ' 间隔时间:', interval);
+        }
+        if (cron) {
+            new CronJob(cron, function () {
+                log.info('---执行任务: ', name);
+                fn.apply(null, args);
+            }, function () {
+                // This function is executed when the job stops
+            }, true);
+            log.info('新增定时任务: ', name, ' Cron:', cron);
+        }
+    });
+};
 
 exports.updateForecast = function () {
     forecast.update();
@@ -75,34 +107,7 @@ exports.fetchWeather = function (fn) {
     weather[fn]();
 };
 
-exports.start = function () {
-    log.info('开始新增定时任务...');
-
-    var jobs = config.jobs;
-    _.each(jobs, function (job) {
-        var name = job.name,
-            fn = exports[job.fn],
-            args = job.args || [],
-            interval = job.interval,
-            cron = job.cron;
-        if (!fn) {
-            return;
-        }
-        if (interval) {
-            setInterval(function () {
-                log.info('---执行任务: ', name);
-                fn.apply(null, args);
-            }, interval);
-            log.info('新增定时任务: ', name, ' 间隔时间:', interval);
-        }
-        if (cron) {
-            new CronJob(cron, function () {
-                log.info('---执行任务: ', name);
-                fn.apply(null, args);
-            }, function () {
-                // This function is executed when the job stops
-            }, true);
-            log.info('新增定时任务: ', name, ' Cron:', cron);
-        }
-    });
-}
+exports.backup = function () {
+    backup.log();
+    backup.weather();
+};
