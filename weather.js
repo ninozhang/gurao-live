@@ -4,44 +4,48 @@ var _ = require('underscore'),
     config = require('./config').weather,
     FetchStream = require("fetch").FetchStream,
     fs = require("fs"),
+    log = require('./log'),
     folder = config.folder || (fs.realpathSync('.') + '/downloads/');
 
 // 24小时降水
 exports.js24 = function () {
     var c = getCommon(60, 20 * 60000),
+        g = c.g,
         type = 'js24',
         filename = g.yyyy + g.MM + g.dd + g.hh + g.mm + '02400' + '.JPG',
         url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ER24_ACHN_L88_P9_' +
                 filename;
 
-    console.log('抓取【24小时降水】图，', url);
+    log.debug('抓取【24小时降水】图，', url);
     fetchWeather(type, filename, url);
 };
 
 // 48小时降水
 exports.js48 = function () {
     var c = getCommon(60, 20 * 60000),
+        g = c.g,
         type = 'js48',
         filename = g.yyyy + g.MM + g.dd + g.hh + g.mm + '04800' + '.JPG',
         url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ER24_ACHN_L88_P9_' +
                 filename;
 
-    console.log('抓取【48小时降水】图，', url);
+    log.debug('抓取【48小时降水】图，', url);
     fetchWeather(type, filename, url);
 };
 
 // 72小时降水
 exports.js72 = function () {
     var c = getCommon(60, 20 * 60000),
+        g = c.g,
         type = 'js72',
         filename = g.yyyy + g.MM + g.dd + g.hh + g.mm + '07200' + '.JPG',
         url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ER24_ACHN_L88_P9_' +
                 filename;
 
-    console.log('抓取【72小时降水】图，', url);
+    log.debug('抓取【72小时降水】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -54,7 +58,7 @@ exports.wd1 = function () {
                 'STFC/SEVP_NMC_STFC_SFER_ET0_ACHN_L88_PB_' +
                 filename;
 
-    console.log('抓取【1小时温度】图，', url);
+    log.debug('抓取【1小时温度】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -67,7 +71,7 @@ exports.fc1 = function () {
                 'STFC/SEVP_NMC_STFC_SFER_EDA_ACHN_L88_PB_' +
                 filename;
 
-    console.log('抓取【1小时风场】图，', url);
+    log.debug('抓取【1小时风场】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -80,7 +84,7 @@ exports.js1 = function () {
                 'STFC/SEVP_NMC_STFC_SFER_ER1_ACHN_L88_PB_' +
                 filename;
 
-    console.log('抓取【1小时降水】图，', url);
+    log.debug('抓取【1小时降水】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -94,7 +98,7 @@ exports.gzld = function () {
                 filename;
 
 
-    console.log('抓取【广州雷达】图，', url);
+    log.debug('抓取【广州雷达】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -108,7 +112,7 @@ exports.stld = function () {
                 filename;
 
 
-    console.log('抓取【汕头雷达】图，', url);
+    log.debug('抓取【汕头雷达】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -121,7 +125,7 @@ exports.wxyt = function () {
                 'WXCL/SEVP_NSMC_WXCL_ASC_E99_ACHN_LNO_PY_' +
                 filename;
 
-    console.log('抓取【卫星云图】图，', url);
+    log.debug('抓取【卫星云图】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -134,7 +138,7 @@ exports.hnldpt = function () {
                 'RDCP/SEVP_NMC_RDCP_SLDAS_EZ9_ASCN_L88_PI_' +
                 filename;
 
-    console.log('抓取【华南雷达拼图】图，', url);
+    log.debug('抓取【华南雷达拼图】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -147,7 +151,7 @@ exports.qgldpt = function () {
                 'RDCP/SEVP_NMC_RDCP_SLDAS_EZ9_ACHN_L88_PI_' +
                 filename;
 
-    console.log('抓取【全国雷达拼图】图，', url);
+    log.debug('抓取【全国雷达拼图】图，', url);
     fetchWeather(type, filename, url);
 };
 
@@ -161,12 +165,12 @@ function fetchWeather(type, filename, url) {
         contentLength = 0;
 
     if (fileSize(outpath) > 10000) {
-        console.log('天气实况图片已存在：', type + '/' + filename);
+        log.debug('天气实况图片已存在：', type + '/' + filename);
         return;
     }
 
     if (!fs.existsSync(dir)) {
-        console.log('创建目录：', dir);
+        log.debug('创建目录：', dir);
         fs.mkdirSync(folder + type + '/');
     }
 
@@ -180,7 +184,7 @@ function fetchWeather(type, filename, url) {
     });
     fetch.on('end', function () {
         if (status == 200 && fileSize(outpath) > 10000) {
-            console.log('天气实况图片保存到：', type + '/' + filename);
+            log.debug('天气实况图片保存到：', type + '/' + filename);
             saveWeather(type, filename, contentType, contentLength);
         } else {
             fs.unlinkSync(outpath);

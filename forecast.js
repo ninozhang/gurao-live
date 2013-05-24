@@ -2,7 +2,8 @@ var _ = require('underscore'),
     async = require('async'),
     get = require('get'),
     db = require('./db'),
-    config = require('./config');
+    config = require('./config'),
+    log = require('./log');
 
 var update = exports.update = function (callback) {
     var forecast = config.forecast,
@@ -11,16 +12,18 @@ var update = exports.update = function (callback) {
         cities = forecast.cities;
     _.each(cities, function (city) {
         async.parallel({
-            data: function (callback){
+            data: function (callback) {
                 get({ uri: url.replace(replacement, city) }).asString(function (err, data) {
                     if (err) throw err;
-                    var json = JSON.parse(data),
-                        data = json2data(json.weatherinfo);
+                    var json = JSON.parse(data);
+                    data = json2data(json.weatherinfo);
+                    log.debug('抓取[', city, ']新天气预报：', data);
                     callback(null, data);
                 });
             },
-            last: function (callback){
+            last: function (callback) {
                 var cb = function (data) {
+                    log.debug('数据库[', city, ']最新天气预报：', data);
                     callback(null, data);
                 };
                 getLatest(city, cb);
@@ -39,13 +42,13 @@ var update = exports.update = function (callback) {
                 }
             });
             if (updated) {
-                console.log('forecast update: ', data.city_code + '的预报有更新，插入数据库');
+                log.info('[', data.city_code, ']预报有更新，插入数据库');
                 db.save('forecast', data);
                 if (callback) {
                     callback(data);
                 }
             } else {
-                console.log('forecast noupdate: ', data.city_code + '的预报无更新');
+                log.info('[', data.city_code, ']预报无更新');
                 if (callback) {
                     callback(data);
                 }
@@ -64,7 +67,7 @@ var getLatest = exports.getLatest = function (city, callback) {
     });
 };
 
-function getTemp() {
+function getTemp(temp) {
     return {
         a: temp.substring(0, temp.indexOf('℃')),
         b: temp.substring(temp.indexOf('~') + 1, temp.length - 1)

@@ -5,10 +5,16 @@ var _ = require('underscore'),
     forecast = require('./forecast'),
     weather = require('./weather'),
     live = require('./live'),
-    weibo = require('./weibo');
+    log = require('./log'),
+    weibo = require('./weibo'),
+    log = require('./log');
 
 exports.updateForecast = function () {
     forecast.update();
+};
+
+exports.newLog = function () {
+    log.newLog();
 };
 
 exports.addForecastBlog = function (city) {
@@ -44,22 +50,22 @@ exports.addForecastBlog = function (city) {
             live = results.live,
             login = results.login;
         if (!forecast) {
-            console.warn('Add Forecast Blog Error: ', forecast);
+            log.warn('发布预报微博出错，预报为空。', forecast);
             return;
         }
         if (live) {
             weibo.addPic(live, function (url) {
                 weibo.addBlog(forecast, url, function (id) {
-                    console.log('Add Forecast Blog Success.', id);
+                    log.info('发布预报微博成功。', id);
                 }, function (e) {
-                    console.warn('Add Forecast Blog Error: ', e);
+                    log.warn('发布预报微博失败。', e);
                 });
             });
         } else {
             weibo.addBlog(forecast, function (id) {
-                console.log('Add Forecast Blog Success.', id);
+                log.info('发布预报微博成功。', id);
             }, function (e) {
-                console.warn('Add Forecast Blog Error: ', e);
+                log.warn('发布预报微博失败。', e);
             });
         }
     });
@@ -70,7 +76,7 @@ exports.fetchWeather = function (fn) {
 };
 
 exports.start = function () {
-    console.log('Job Start...');
+    log.info('开始新增定时任务...');
 
     var jobs = config.jobs;
     _.each(jobs, function (job) {
@@ -84,19 +90,19 @@ exports.start = function () {
         }
         if (interval) {
             setInterval(function () {
-                console.info('---Running Job: ', name);
+                log.info('---执行任务: ', name);
                 fn.apply(null, args);
             }, interval);
-            console.log('Set Up Job: ', name, ' interval:', interval);
+            log.info('新增定时任务: ', name, ' 间隔时间:', interval);
         }
         if (cron) {
             new CronJob(cron, function () {
-                console.info('---Running Job: ', name);
+                log.info('---执行任务: ', name);
                 fn.apply(null, args);
             }, function () {
                 // This function is executed when the job stops
             }, true);
-            console.log('Set Up Job: ', name, ' cron:', cron);
+            log.info('新增定时任务: ', name, ' Cron:', cron);
         }
     });
 }

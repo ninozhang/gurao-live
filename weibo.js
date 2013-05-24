@@ -4,6 +4,7 @@ var _ = require('underscore'),
     https = require('https'),
     qs = require('querystring'),
     config = require('./config').weibo,
+    log = require('./log'),
     cookies = {},
     cookieString;
 
@@ -82,19 +83,21 @@ function request(path, method, data, callback, error) {
             });
             res.on('end', function () {
                 updateCookie(res.headers['set-cookie']);
+                log.info('微博API接口请求成功。');
                 var data = Buffer.concat(chunks).toString();
                 if (data) {
                     try {
                         data = JSON.parse(data);
                     } catch(e) {
-                        console.error('JSON parse error', e);
+                        log.error('微博API接口数据解析失败。', e);
                     }
                 }
                 if (callback) {
                     callback(data);
                 }
             });
-            res.on("error", function (e) {
+            res.on('error', function (e) {
+                log.warn('微博接口返回出错。', e);
                 if (error) {
                     error(e);
                 }
@@ -106,13 +109,14 @@ function request(path, method, data, callback, error) {
     }
 
     req.on('error', function (e) {
+        log.warn('微博接口请求出错。', e);
         if (error) {
             error(e);
         }
     });
 
-    console.log('request.data:', data);
-    console.log('request.cookie:', cookieString);
+    log.debug('微博请求数据：', data);
+    log.debug('微博请求cookie：', cookieString);
     req.end();
 
     return req;
@@ -160,12 +164,14 @@ function upload(path, filepath, callback, error) {
                 }
             });
             res.on('end', function () {
+                log.info('微博图片上传接口请求成功。');
                 var data = Buffer.concat(chunks).toString();
                 if (callback) {
                     callback(data);
                 }
             });
-            res.on("error", function (e) {
+            res.on('error', function (e) {
+                log.warn('微博图片上传接口返回出错。', e);
                 if (error) {
                     error(e);
                 }
@@ -173,6 +179,7 @@ function upload(path, filepath, callback, error) {
         });
 
     req.on('error', function (e) {
+        log.warn('微博图片上传接口请求出错。', e);
         if (error) {
             error(e);
         }
@@ -185,7 +192,7 @@ function upload(path, filepath, callback, error) {
 }
 
 var login = exports.login = function (callback, error) {
-    console.log('start login');
+    log.info('登录微博。');
     post('/login', {
             'check' : '1',
             'backURL' : '/',
@@ -196,10 +203,12 @@ var login = exports.login = function (callback, error) {
 };
 
 var getHomeData = exports.getHomeData = function (callback, error) {
+    log.info('获取首页数据。');
     get('/home/homeData?page=1&', callback, error);
 };
 
 var getUserInfo = exports.getUserInfo = function (callback, error) {
+    log.info('获取用户信息。');
     getHomeData(function (data) {
         if (callback) {
             callback(data.userInfo);
@@ -215,7 +224,7 @@ var addPic = exports.addPic = function (filepath, callback, error) {
         var start = data.indexOf('http:/'),
             end = data.indexOf('\',\'\')'),
             url = data.substring(start, end);
-        console.log('add pic url:', url);
+        log.info('上传图片到微博：', url);
         callback(url);
     }, error);
 };
@@ -235,7 +244,7 @@ var addBlog = exports.addBlog = function (content, pic, callback, error) {
     if (pic) {
         data.picFile = pic;
     }
-    console.log('add blog:', data);
+    log.info('发布微博：', JSON.stringify(data));
 
     post('/mblogDeal/addAMblog?st=b1f8', data, function (data) {
         if (!callback) {

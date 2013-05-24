@@ -1,20 +1,19 @@
 var _ = require('underscore'),
     mysql = require('mysql'),
-    config = require('./config'),
-    db = config.db;
+    db = require('./config').db;
 
 var getConn = exports.getConn = function () {
     var conn = mysql.createConnection({
         host: db.host,
         database: db.database,
         user: db.user,
-        password: db.password,
+        password: db.password
     });
 
     conn.connect();
 
     return conn;
-}
+};
 
 exports.query = function (sql, callback, error) {
     var conn = getConn();
