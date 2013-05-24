@@ -157,8 +157,10 @@ exports.qgldpt = function () {
 
 // 抓取图片逻辑
 function fetchWeather(type, filename, url) {
-    var dir = folder + type + '/',
-        outpath = dir + filename,
+    var date = new Date(),
+        typeDir = folder + type + '/',
+        dailyDir = typeDir + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + '/',
+        outpath = dailyDir + filename,
         stream,
         status,
         contentType,
@@ -169,9 +171,14 @@ function fetchWeather(type, filename, url) {
         return;
     }
 
-    if (!fs.existsSync(dir)) {
-        log.debug('创建目录：', dir);
-        fs.mkdirSync(folder + type + '/');
+    if (!fs.existsSync(typeDir)) {
+        log.debug('创建目录：', typeDir);
+        fs.mkdirSync(typeDir);
+    }
+
+    if (!fs.existsSync(dailyDir)) {
+        log.debug('创建目录：', dailyDir);
+        fs.mkdirSync(dailyDir);
     }
 
     var fetch = new FetchStream(url);
