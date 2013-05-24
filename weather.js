@@ -53,7 +53,7 @@ exports.js72 = function () {
 exports.wd1 = function () {
     var c = getCommon(60, 20 * 60000),
         type = 'wd1',
-        filename = fulltime + '.JPG',
+        filename = c.fulltime + '.JPG',
         url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_ET0_ACHN_L88_PB_' +
                 filename;
@@ -66,7 +66,7 @@ exports.wd1 = function () {
 exports.fc1 = function () {
     var c = getCommon(60, 20 * 60000),
         type = 'fc1',
-        filename = fulltime + '.JPG',
+        filename = c.fulltime + '.JPG',
         url = c.prefix +
                 'STFC/SEVP_NMC_STFC_SFER_EDA_ACHN_L88_PB_' +
                 filename;
