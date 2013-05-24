@@ -45,67 +45,7 @@ exports.jobs = [
         cron: '0-59/1 * * * *'
     },
     {
-        name: '抓取广州雷达图',
-        fn: 'fetchWeather',
-        args: ['gzld'],
-        cron: '0-59/1 * * * *'
-    },
-    {
-        name: '抓取卫星云图',
-        fn: 'fetchWeather',
-        args: ['wxyt'],
-        cron: '0-59/5 * * * *'
-    },
-    {
-        name: '抓取华南雷达拼图',
-        fn: 'fetchWeather',
-        args: ['hnldpt'],
-        cron: '0-59/5 * * * *'
-    },
-    {
-        name: '抓取全国雷达拼图',
-        fn: 'fetchWeather',
-        args: ['qgldpt'],
-        cron: '0-59/5 * * * *'
-    },
-    {
-        name: '抓取24小时降水',
-        fn: 'fetchWeather',
-        args: ['js24'],
-        cron: '0-59/30 * * * *'
-    },
-    {
-        name: '抓取48小时降水',
-        fn: 'fetchWeather',
-        args: ['js48'],
-        cron: '0-59/30 * * * *'
-    },
-    {
-        name: '抓取72小时降水',
-        fn: 'fetchWeather',
-        args: ['js72'],
-        cron: '0-59/30 * * * *'
-    },
-    {
-        name: '抓取1小时降水',
-        fn: 'fetchWeather',
-        args: ['js1'],
-        cron: '0-59/30 * * * *'
-    },
-    {
-        name: '抓取1小时温度',
-        fn: 'fetchWeather',
-        args: ['wd1'],
-        cron: '0-59/30 * * * *'
-    },
-    {
-        name: '抓取1小时风场',
-        fn: 'fetchWeather',
-        args: ['fc1'],
-        cron: '0-59/30 * * * *'
-    },
-    {
-        name: '发布谷饶天气预报微博',
+        name: '发布天气预报微博',
         fn: 'addForecastBlog',
         args: ['101280502'],
         cron: '0 0-23/4 * * *'
