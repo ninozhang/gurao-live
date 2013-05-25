@@ -1,4 +1,5 @@
-var fs = require('fs'),
+var _ = require('underscore'),
+    fs = require('fs'),
     Log = require('log'),
     level = 'debug',
     dir = fs.realpathSync('.') + '/logs/',
@@ -12,7 +13,13 @@ function getLog() {
 }
 
 function toLog(args) {
-    return Array.prototype.slice.apply(args).join('');
+    var array = Array.prototype.slice.apply(args);
+    array.forEach(function(value, index) {
+        if (_.isObject(value)) {
+            array[index] = JSON.stringify(value);
+        }
+    });
+    return array.join(' ');
 }
 
 var newLog = exports.newLog = function () {
