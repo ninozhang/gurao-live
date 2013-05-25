@@ -11,12 +11,32 @@ function init() {
     log.info('初始化mail，共有', transports.length, '个邮箱。');
 }
 
+function wrapPath(path) {
+    return {
+        filePath: path
+    };
+}
+
 exports.send = function (to, subject, text, attachments, callback, error) {
     log.info('发送邮件：', to, subject, text, attachments);
 
     if (!to || !subject || !text) {
         log.warning('邮件必要字段为空，无法发送邮件：', to, subject, text);
         return;
+    }
+
+    if (attachments) {
+        if (_.isString(attachments)) {
+            attachments = [
+                wrapPath(attachments)
+            ];
+        } else if(_.isArray(attachments)) {
+            attachments.forEach(function (attachment, index) {
+                if (_.isString(attachment)) {
+                    attachments[index] = wrapPath(attachment);
+                }
+            });
+        }
     }
 
     if (_.isFunction(attachments)) {
