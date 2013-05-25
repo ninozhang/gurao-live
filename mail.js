@@ -17,7 +17,7 @@ function wrapPath(path) {
     };
 }
 
-exports.send = function (to, subject, text, attachments, callback, error) {
+var send = exports.send = function (to, subject, text, attachments, callback, error) {
     log.info('发送邮件：', to, subject, text, attachments);
 
     if (!to || !subject || !text) {
@@ -68,6 +68,16 @@ exports.send = function (to, subject, text, attachments, callback, error) {
             }
         });
     });
+};
+
+exports.backup = function(subject, attachments, callback, error) {
+    var to = [];
+    mails.forEach(function(m) {
+        to.push(m.auth.user);
+    });
+    subject = '谷饶时景' + subject;
+    text = subject + new Date().toString();
+    send(to, subject, text, attachments, callback, error);
 };
 
 init();
