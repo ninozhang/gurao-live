@@ -59,7 +59,7 @@ function makeOptions(path, method, headers) {
 }
 
 function request(path, method, data, callback, error) {
-    if (_.isfunction (data)) {
+    if (_.isFunction(data)) {
         error = callback;
         callback = data;
         data = null;
@@ -230,7 +230,7 @@ var addPic = exports.addPic = function (filepath, callback, error) {
 };
 
 var addBlog = exports.addBlog = function (content, pic, callback, error) {
-    if (_.isfunction (pic)) {
+    if (_.isFunction(pic)) {
         error = callback;
         callback = pic;
         pic = null;
